@@ -55,7 +55,7 @@ CREATE TABLE `AgentBinary` (
 ) ENGINE = InnoDB;
 
 INSERT INTO `AgentBinary` (`agentBinaryId`, `type`, `version`, `operatingSystems`, `filename`, `updateTrack`, `updateAvailable`) VALUES
-  (1, 'python', '0.6.0.10', 'Windows, Linux, OS X', 'hashtopolis.zip', 'stable', '');
+  (1, 'python', '0.6.0', 'Windows, Linux, OS X', 'hashtopolis.zip', 'stable', '');
 
 CREATE TABLE `AgentError` (
   `agentErrorId` INT(11) NOT NULL,
@@ -172,12 +172,10 @@ INSERT INTO `Config` (`configId`, `configSectionId`, `item`, `value`) VALUES
   (75, 4, 'agentUtilThreshold2', '75'),
   (76, 3, 'uApiSendTaskIsComplete', '0'),
   (77, 1, 'hcErrorIgnore', 'DeviceGetFanSpeed');
-
 CREATE TABLE `ConfigSection` (
   `configSectionId` INT(11)      NOT NULL,
   `sectionName`     VARCHAR(100) NOT NULL
 ) ENGINE = InnoDB;
-
 INSERT INTO `ConfigSection` (`configSectionId`, `sectionName`) VALUES
   (1, 'Cracking/Tasks'),
   (2, 'Yubikey'),
@@ -186,7 +184,6 @@ INSERT INTO `ConfigSection` (`configSectionId`, `sectionName`) VALUES
   (5, 'Server'),
   (6, 'Multicast'),
   (7, 'Notifications');
-
 CREATE TABLE `CrackerBinary` (
   `crackerBinaryId`     INT(11)      NOT NULL,
   `crackerBinaryTypeId` INT(11)      NOT NULL,
@@ -194,19 +191,15 @@ CREATE TABLE `CrackerBinary` (
   `downloadUrl`         VARCHAR(150) NOT NULL,
   `binaryName`          VARCHAR(50)  NOT NULL
 ) ENGINE = InnoDB;
-
 INSERT INTO `CrackerBinary` (`crackerBinaryId`, `crackerBinaryTypeId`, `version`, `downloadUrl`, `binaryName`) VALUES
-  (1, 1, '6.0.0', 'https://hashcat.net/files/hashcat-6.0.0.7z', 'hashcat');
-
+  (1, 1, '5.1.0', 'https://hashcat.net/files/hashcat-5.1.0.7z', 'hashcat');
 CREATE TABLE `CrackerBinaryType` (
   `crackerBinaryTypeId` INT(11)     NOT NULL,
   `typeName`            VARCHAR(30) NOT NULL,
   `isChunkingAvailable` TINYINT(4)  NOT NULL
 ) ENGINE = InnoDB;
-
 INSERT INTO `CrackerBinaryType` (`crackerBinaryTypeId`, `typeName`, `isChunkingAvailable`) VALUES
   (1, 'hashcat', 1);
-
 CREATE TABLE `File` (
   `fileId`   INT(11)      NOT NULL,
   `filename` VARCHAR(100) NOT NULL,
@@ -215,25 +208,21 @@ CREATE TABLE `File` (
   `fileType` INT(11)      NOT NULL,
   `accessGroupId` INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `FilePretask` (
   `filePretaskId` INT(11) NOT NULL,
   `fileId`        INT(11) NOT NULL,
   `pretaskId`     INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `FileTask` (
   `fileTaskId` INT(11) NOT NULL,
   `fileId`     INT(11) NOT NULL,
   `taskId`     INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `FileDelete` (
   `fileDeleteId` INT(11)      NOT NULL,
   `filename`     VARCHAR(256) NOT NULL,
   `time`         BIGINT       NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `Hash` (
   `hashId`      INT(11)      NOT NULL,
   `hashlistId`  INT(11)      NOT NULL,
@@ -245,7 +234,6 @@ CREATE TABLE `Hash` (
   `isCracked`   TINYINT(4)   NOT NULL,
   `crackPos`    BIGINT       NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `HashBinary` (
   `hashBinaryId` INT(11)       NOT NULL,
   `hashlistId`   INT(11)       NOT NULL,
@@ -257,7 +245,6 @@ CREATE TABLE `HashBinary` (
   `isCracked`    TINYINT(4)    NOT NULL,
   `crackPos`     BIGINT        NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `Hashlist` (
   `hashlistId`    INT(11)      NOT NULL,
   `hashlistName`  VARCHAR(100) NOT NULL,
@@ -274,20 +261,17 @@ CREATE TABLE `Hashlist` (
   `brainId`       INT(11)      NOT NULL,
   `brainFeatures` TINYINT(4)   NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `HashlistHashlist` (
   `hashlistHashlistId` INT(11) NOT NULL,
   `parentHashlistId`   INT(11) NOT NULL,
   `hashlistId`         INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `HashType` (
   `hashTypeId`  INT(11)      NOT NULL,
   `description` VARCHAR(256) NOT NULL,
   `isSalted`    TINYINT(4)   NOT NULL,
   `isSlowHash`  TINYINT(4)   NOT NULL
 ) ENGINE = InnoDB;
-
 INSERT INTO `HashType` (`hashTypeId`, `description`, `isSalted`, `isSlowHash`) VALUES
   (0,     'MD5', 0, 0),
   (10,    'md5($pass.$salt)', 1, 0),
@@ -605,7 +589,6 @@ INSERT INTO `HashType` (`hashTypeId`, `description`, `isSalted`, `isSlowHash`) V
   (22400, 'AES Crypt (SHA256)', 0, 0),
   (22500, 'MultiBit Classic .key (MD5)', 0, 0),
   (99999, 'Plaintext', 0, 0);
-
 CREATE TABLE `LogEntry` (
   `logEntryId` INT(11)     NOT NULL,
   `issuer`     VARCHAR(50) NOT NULL,
@@ -614,7 +597,6 @@ CREATE TABLE `LogEntry` (
   `message`    TEXT        NOT NULL,
   `time`       BIGINT      NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `NotificationSetting` (
   `notificationSettingId` INT(11)      NOT NULL,
   `action`                VARCHAR(50)  NOT NULL,
@@ -624,7 +606,6 @@ CREATE TABLE `NotificationSetting` (
   `receiver`              VARCHAR(256) NOT NULL,
   `isActive`              TINYINT(4)   NOT NULL
 )ENGINE = InnoDB;
-
 CREATE TABLE `Pretask` (
   `pretaskId`           INT(11)      NOT NULL,
   `taskName`            VARCHAR(100) NOT NULL,
@@ -639,22 +620,18 @@ CREATE TABLE `Pretask` (
   `isMaskImport`        TINYINT(4)   NOT NULL,
   `crackerBinaryTypeId` INT(11)      NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `RegVoucher` (
   `regVoucherId` INT(11)      NOT NULL,
   `voucher`      VARCHAR(100) NOT NULL,
   `time`         BIGINT       NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `RightGroup` (
   `rightGroupId` INT(11)     NOT NULL,
   `groupName`    VARCHAR(50) NOT NULL,
   `permissions`  TEXT        NOT NULL
 ) ENGINE = InnoDB;
-
 INSERT INTO `RightGroup` (`rightGroupId`, `groupName`, `permissions`) VALUES
   (1, 'Administrator', 'ALL');
-
 CREATE TABLE `Session` (
   `sessionId`        INT(11)      NOT NULL,
   `userId`           INT(11)      NOT NULL,
@@ -664,7 +641,6 @@ CREATE TABLE `Session` (
   `sessionLifetime`  INT(11)      NOT NULL,
   `sessionKey`       VARCHAR(256) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `Speed` (
   `speedId` INT(11)    NOT NULL,
   `agentId` INT(11)    NOT NULL,
@@ -672,23 +648,19 @@ CREATE TABLE `Speed` (
   `speed`   BIGINT(20) NOT NULL,
   `time`    BIGINT(20) NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `StoredValue` (
   `storedValueId` VARCHAR(50)  NOT NULL,
   `val`           VARCHAR(256) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `Supertask` (
   `supertaskId`   INT(11)     NOT NULL,
   `supertaskName` VARCHAR(50) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `SupertaskPretask` (
   `supertaskPretaskId` INT(11) NOT NULL,
   `supertaskId`        INT(11) NOT NULL,
   `pretaskId`          INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `Task` (
   `taskId`              INT(11)      NOT NULL,
   `taskName`            VARCHAR(256) NOT NULL,
@@ -712,15 +684,15 @@ CREATE TABLE `Task` (
   `chunkSize`           BIGINT(20)   NOT NULL,
   `forcePipe`           TINYINT(4)   NOT NULL,
   `usePreprocessor`     TINYINT(4)   NOT NULL,
-  `preprocessorCommand` VARCHAR(256) NOT NULL
+  `preprocessorCommand` VARCHAR(256) NOT NULL,
+  `createdByUserId`     INT(11)      NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `TaskDebugOutput` (
   `taskDebugOutputId` INT(11)      NOT NULL,
   `taskId`            INT(11)      NOT NULL,
   `output`            VARCHAR(256) NOT NULL
 ) ENGINE=InnoDB;
- 
+
 CREATE TABLE `TaskWrapper` (
   `taskWrapperId`   INT(11)      NOT NULL,
   `priority`        INT(11)      NOT NULL,
@@ -731,7 +703,6 @@ CREATE TABLE `TaskWrapper` (
   `isArchived`      TINYINT(4)   NOT NULL,
   `cracked`         INT(11)      NOT NULL
 )ENGINE = InnoDB;
-
 CREATE TABLE `User` (
   `userId`             INT(11)      NOT NULL,
   `username`           VARCHAR(100) NOT NULL,
@@ -750,7 +721,6 @@ CREATE TABLE `User` (
   `otp3`               VARCHAR(256) DEFAULT NULL,
   `otp4`               VARCHAR(256) DEFAULT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `Zap` (
   `zapId`      INT(11) NOT NULL,
   `hash`       TEXT    NOT NULL,
@@ -758,7 +728,6 @@ CREATE TABLE `Zap` (
   `agentId`    INT(11) NULL,
   `hashlistId` INT(11) NOT NULL
 ) ENGINE = InnoDB;
-
 CREATE TABLE `ApiKey` (
   `apiKeyId`    INT(11)      NOT NULL,
   `startValid`  BIGINT(20)   NOT NULL,
@@ -768,23 +737,19 @@ CREATE TABLE `ApiKey` (
   `userId`      INT(11)      NOT NULL,
   `apiGroupId`  INT(11)      NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `ApiGroup` (
   `apiGroupId`  INT(11)      NOT NULL,
   `name`        VARCHAR(100) NOT NULL,
   `permissions` TEXT         NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `FileDownload` (
   `fileDownloadId` INT(11) NOT NULL,
   `time`           BIGINT  NOT NULL,
   `fileId`         INT(11) NOT NULL,
   `status`         INT(11) NOT NULL
 ) ENGINE=InnoDB;
-
 INSERT INTO `ApiGroup` ( `apiGroupId`, `name`, `permissions`) VALUES
   (1, 'Administrators', 'ALL');
-
 CREATE TABLE `HealthCheck` (
   `healthCheckId`   INT(11)      NOT NULL,
   `time`            BIGINT(20)   NOT NULL,
@@ -795,7 +760,6 @@ CREATE TABLE `HealthCheck` (
   `expectedCracks`  INT(11)      NOT NULL,
   `attackCmd`       VARCHAR(256) NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `HealthCheckAgent` (
   `healthCheckAgentId` INT(11)    NOT NULL,
   `healthCheckId`      INT(11)    NOT NULL,
@@ -807,7 +771,6 @@ CREATE TABLE `HealthCheckAgent` (
   `end`                BIGINT(20) NOT NULL,
   `errors`             TEXT       NOT NULL
 ) ENGINE=InnoDB;
-
 CREATE TABLE `Preprocessor` (
   `preprocessorId`  INT(11)      NOT NULL,
   `name`            VARCHAR(256) NOT NULL,
@@ -817,7 +780,6 @@ CREATE TABLE `Preprocessor` (
   `skipCommand`     VARCHAR(256) NULL,
   `limitCommand`    VARCHAR(256) NULL
 ) ENGINE=InnoDB;
-
 INSERT INTO `Preprocessor` ( `preprocessorId`, `name`, `url`, `binaryName`, `keyspaceCommand`, `skipCommand`, `limitCommand`) VALUES
   (1, 'Prince', 'https://github.com/hashcat/princeprocessor/releases/download/v0.22/princeprocessor-0.22.7z', 'pp', '--keyspace', '--skip', '--limit');
 
@@ -929,10 +891,10 @@ ALTER TABLE `HashlistHashlist`
 ALTER TABLE `HashType`
   ADD PRIMARY KEY (`hashTypeId`);
 
-ALTER TABLE `HealthCheck` 
+ALTER TABLE `HealthCheck`
   ADD PRIMARY KEY (`healthCheckId`);
 
-ALTER TABLE `HealthCheckAgent` 
+ALTER TABLE `HealthCheckAgent`
   ADD PRIMARY KEY (`healthCheckAgentId`);
 
 ALTER TABLE `LogEntry`
@@ -973,7 +935,8 @@ ALTER TABLE `SupertaskPretask`
 
 ALTER TABLE `Task`
   ADD PRIMARY KEY (`taskId`),
-  ADD KEY `crackerBinaryId` (`crackerBinaryId`);
+  ADD KEY `crackerBinaryId` (`crackerBinaryId`),
+  ADD KEY `createdByUserId` (`createdByUserId`);
 
 ALTER TABLE `TaskDebugOutput`
   ADD PRIMARY KEY (`taskDebugOutputId`);
@@ -1077,10 +1040,10 @@ ALTER TABLE `Hashlist`
 ALTER TABLE `HashlistHashlist`
   MODIFY `hashlistHashlistId` INT(11) NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `HealthCheck` 
+ALTER TABLE `HealthCheck`
   MODIFY `healthCheckId` INT(11) NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `HealthCheckAgent` 
+ALTER TABLE `HealthCheckAgent`
   MODIFY `healthCheckAgentId` INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `LogEntry`
@@ -1227,7 +1190,8 @@ ALTER TABLE `SupertaskPretask`
 ALTER TABLE `Task`
   ADD CONSTRAINT `Task_ibfk_1` FOREIGN KEY (`crackerBinaryId`)     REFERENCES `CrackerBinary` (`crackerBinaryId`),
   ADD CONSTRAINT `Task_ibfk_2` FOREIGN KEY (`crackerBinaryTypeId`) REFERENCES `CrackerBinaryType` (`crackerBinaryTypeId`),
-  ADD CONSTRAINT `Task_ibfk_3` FOREIGN KEY (`taskWrapperId`)       REFERENCES `TaskWrapper` (`taskWrapperId`);
+  ADD CONSTRAINT `Task_ibfk_3` FOREIGN KEY (`taskWrapperId`)       REFERENCES `TaskWrapper` (`taskWrapperId`),
+  ADD CONSTRAINT `Task_ibfk_4` FOREIGN KEY (`createdByUserId`)     REFERENCES `User` (`userId`);
 
 ALTER TABLE `TaskDebugOutput`
   ADD CONSTRAINT `TaskDebugOutput_ibfk_1` FOREIGN KEY (`taskId`) REFERENCES `Task` (`taskId`);

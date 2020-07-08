@@ -54,7 +54,8 @@ class TaskUtils {
       0,
       0,
       0,
-      ''
+      '',
+      Login::getInstance()->getUserID()
     );
   }
   
@@ -85,7 +86,8 @@ class TaskUtils {
       0,
       0,
       0,
-      ''
+      '',
+      0
     );
   }
   
@@ -710,7 +712,8 @@ class TaskUtils {
       $chunkSize,
       0,
       ($usePreprocessor > 0) ? $preprocessor->getId() : 0,
-      ($usePreprocessor > 0) ? $preprocessorCommand : ''
+      ($usePreprocessor > 0) ? $preprocessorCommand : '',
+      $user->getId()
     );
     $task = Factory::getTaskFactory()->save($task);
     
@@ -793,7 +796,8 @@ class TaskUtils {
         0,
         0,
         0,
-        ''
+        '',
+      0
       );
       $newTask = Factory::getTaskFactory()->save($newTask);
       $taskFiles = [];

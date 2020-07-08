@@ -135,7 +135,8 @@ class HashlistUtils {
           0,
           0,
           0,
-          ''
+          '',
+          $user->getId()
         );
         $newTask = Factory::getTaskFactory()->save($newTask);
         $addCount++;

@@ -26,8 +26,9 @@ class Task extends AbstractModel {
   private $forcePipe;
   private $usePreprocessor;
   private $preprocessorCommand;
+  private $createdByUserId;
   
-  function __construct($taskId, $taskName, $attackCmd, $chunkTime, $statusTimer, $keyspace, $keyspaceProgress, $priority, $color, $isSmall, $isCpuTask, $useNewBench, $skipKeyspace, $crackerBinaryId, $crackerBinaryTypeId, $taskWrapperId, $isArchived, $notes, $staticChunks, $chunkSize, $forcePipe, $usePreprocessor, $preprocessorCommand) {
+  function __construct($taskId, $taskName, $attackCmd, $chunkTime, $statusTimer, $keyspace, $keyspaceProgress, $priority, $color, $isSmall, $isCpuTask, $useNewBench, $skipKeyspace, $crackerBinaryId, $crackerBinaryTypeId, $taskWrapperId, $isArchived, $notes, $staticChunks, $chunkSize, $forcePipe, $usePreprocessor, $preprocessorCommand, $createdByUserId) {
     $this->taskId = $taskId;
     $this->taskName = $taskName;
     $this->attackCmd = $attackCmd;
@@ -51,6 +52,7 @@ class Task extends AbstractModel {
     $this->forcePipe = $forcePipe;
     $this->usePreprocessor = $usePreprocessor;
     $this->preprocessorCommand = $preprocessorCommand;
+    $this->createdByUserId = $createdByUserId;
   }
   
   function getKeyValueDict() {
@@ -78,6 +80,7 @@ class Task extends AbstractModel {
     $dict['forcePipe'] = $this->forcePipe;
     $dict['usePreprocessor'] = $this->usePreprocessor;
     $dict['preprocessorCommand'] = $this->preprocessorCommand;
+    $dict['createdByUserId'] = $this->createdByUserId;
     
     return $dict;
   }
@@ -282,6 +285,14 @@ class Task extends AbstractModel {
     $this->preprocessorCommand = $preprocessorCommand;
   }
   
+  function getCreatedByUserId() {
+    return $this->createdByUserId;
+  }
+  
+  function setCreatedByUserId($id) {
+    $this->createdByUserId = $id;
+  }
+  
   const TASK_ID = "taskId";
   const TASK_NAME = "taskName";
   const ATTACK_CMD = "attackCmd";
@@ -305,4 +316,5 @@ class Task extends AbstractModel {
   const FORCE_PIPE = "forcePipe";
   const USE_PREPROCESSOR = "usePreprocessor";
   const PREPROCESSOR_COMMAND = "preprocessorCommand";
+  const CREATE_BY_USER_ID = "createdByUserId";
 }
