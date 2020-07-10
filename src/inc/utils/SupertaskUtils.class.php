@@ -238,9 +238,10 @@ class SupertaskUtils {
    * @param int $supertaskId
    * @param int $hashlistId
    * @param int $crackerId
+   * @param int $userid
    * @throws HTException
    */
-  public static function runSupertask($supertaskId, $hashlistId, $crackerId) {
+  public static function runSupertask($supertaskId, $hashlistId, $crackerId, $userid) {
     $supertask = Factory::getSupertaskFactory()->get($supertaskId);
     if ($supertask == null) {
       throw new HTException("Invalid supertask ID!");
@@ -268,7 +269,7 @@ class SupertaskUtils {
       }
     }
     
-    $taskWrapper = new TaskWrapper(null, $wrapperPriority, DTaskTypes::SUPERTASK, $hashlist->getId(), $hashlist->getAccessGroupId(), $supertask->getSupertaskName(), 0, 0);
+    $taskWrapper = new TaskWrapper(null, $wrapperPriority, DTaskTypes::SUPERTASK, $hashlist->getId(), $hashlist->getAccessGroupId(), $supertask->getSupertaskName(), 0, 0, $userid);
     $taskWrapper = Factory::getTaskWrapperFactory()->save($taskWrapper);
     
     foreach ($pretasks as $pretask) {
@@ -300,7 +301,8 @@ class SupertaskUtils {
         0,
         0,
         0,
-        ''
+        '',
+        $userid
       );
       if ($hashlist->getHexSalt() == 1 && strpos($task->getAttackCmd(), "--hex-salt") === false) {
         $task->setAttackCmd("--hex-salt " . $task->getAttackCmd());
