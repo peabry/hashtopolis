@@ -26,6 +26,46 @@ use DBA\Factory;
 use DBA\Speed;
 
 class TaskUtils {
+  
+  /**
+   * @param $taskWrapper TaskWrapper
+   * @return array
+   */
+  public static function getTaskWrapperNonDefaultGroups($taskWrapper) {
+    $DEFAULT_GROUP = 1;
+    $qf = new QueryFilter(AccessGroupUser::USER_ID, $taskWrapper->getCreatedByUserId(), '=');
+    $qf2 = new QueryFilter(AccessGroupUser::ACCESS_GROUP_ID, $DEFAULT_GROUP, '!=');
+    $groups = Factory::getAccessGroupUserFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
+    $accessGroups = array();
+    foreach ($groups as $group) {
+      array_push($accessGroups, $group->getAccessGroupId());
+    }
+    return $accessGroups;
+  }
+  
+  /**
+   * Retrieves all tasks which belong to the Agent's group
+   * @param Agent $agent
+   * @param bool $all
+   * @return array(Task)
+   */
+  public static function getGroupTaskWrappers($agent, $all = false) {
+    $DEFAULT_GROUP_ID = 1;
+    $accessGroups = AccessUtils::getAgentNonDefaultGroups($agent);
+    # taskwrappers which are not default
+    $qf = new QueryFilter('AccessGroupUser.accessGroupId', $DEFAULT_GROUP_ID, '!=');
+    $qf2 = new QueryFilter(TaskWrapper::PRIORITY, 0, (SConfig::getInstance()->getVal(DConfig::PRIORITY_0_START)) ? ">=" : ">");
+    $qf3 = new QueryFilter(TaskWrapper::IS_ARCHIVED, 0, "=");
+    if ($all) {
+      $qf2 = new QueryFilter(TaskWrapper::PRIORITY, 0, ">=");
+    }
+    $jf = new JoinFilter(Factory::getAccessGroupUserFactory(), TaskWrapper::CREATED_BY_USER_ID, AccessGroupUser::USER_ID);
+    $cf = new ContainFilter('AccessGroupUser.accessGroupId', $accessGroups);
+    $of = new OrderFilter(TaskWrapper::PRIORITY, 'DESC');
+    $taskwrappers = Factory::getTaskWrapperFactory()->filter([Factory::FILTER => [$qf, $qf2, $qf3, $cf], Factory::JOIN => $jf, Factory::ORDER => $of]);
+    return $taskwrappers['TaskWrapper'];
+  }
+  
   /**
    * @param Pretask $copy
    * @return Task
@@ -797,7 +837,7 @@ class TaskUtils {
         0,
         0,
         '',
-      0
+        0
       );
       $newTask = Factory::getTaskFactory()->save($newTask);
       $taskFiles = [];
@@ -833,16 +873,21 @@ class TaskUtils {
     $accessGroupAgent = $joined[Factory::getAccessGroupFactory()->getModelName()];
     $accessGroups = Util::arrayOfIds($accessGroupAgent);
     
-    // get all TaskWrappers which we have access to
-    $qF1 = new ContainFilter(TaskWrapper::ACCESS_GROUP_ID, $accessGroups);
-    $qF2 = new QueryFilter(TaskWrapper::PRIORITY, 0, (SConfig::getInstance()->getVal(DConfig::PRIORITY_0_START)) ? ">=" : ">");
-    $qF3 = new QueryFilter(TaskWrapper::IS_ARCHIVED, 0, "=");
-    if ($all) {
-      // if we want to retrieve all tasks which are accessible, we also show the ones with 0 priority
-      $qF2 = new QueryFilter(TaskWrapper::PRIORITY, 0, ">=");
+    // get any TaskWrappers that do not belong to default
+    $taskWrappers = TaskUtils::getGroupTaskWrappers($agent);
+    // if none, get TaskWrappers that belong to default
+    if (count($taskWrappers) === 0) {
+      // get all TaskWrappers which we have access to
+      $qF1 = new ContainFilter(TaskWrapper::ACCESS_GROUP_ID, $accessGroups);
+      $qF2 = new QueryFilter(TaskWrapper::PRIORITY, 0, (SConfig::getInstance()->getVal(DConfig::PRIORITY_0_START)) ? ">=" : ">");
+      $qF3 = new QueryFilter(TaskWrapper::IS_ARCHIVED, 0, "=");
+      if ($all) {
+        // if we want to retrieve all tasks which are accessible, we also show the ones with 0 priority
+        $qF2 = new QueryFilter(TaskWrapper::PRIORITY, 0, ">=");
+      }
+      $oF = new OrderFilter(TaskWrapper::PRIORITY, "DESC");
+      $taskWrappers = Factory::getTaskWrapperFactory()->filter([Factory::FILTER => [$qF1, $qF2, $qF3], Factory::ORDER => $oF]);
     }
-    $oF = new OrderFilter(TaskWrapper::PRIORITY, "DESC");
-    $taskWrappers = Factory::getTaskWrapperFactory()->filter([Factory::FILTER => [$qF1, $qF2, $qF3], Factory::ORDER => $oF]);
     
     // go trough task wrappers and test if we have access
     foreach ($taskWrappers as $taskWrapper) {
@@ -1071,9 +1116,10 @@ class TaskUtils {
   /**
    * @param $task1 Task
    * @param $task2 Task
+   * @param $agent Agent
    * @return Task task which should be worked on
    */
-  public static function getImportantTask($task1, $task2) {
+  public static function getImportantTask($task1, $task2, $agent) {
     if ($task1 == null) {
       return $task2;
     }
@@ -1081,8 +1127,42 @@ class TaskUtils {
       return $task1;
     }
     
+    $agentGroups = AccessUtils::getAgentNonDefaultGroups($agent);
+    
     $taskWrapper1 = Factory::getTaskWrapperFactory()->get($task1->getTaskWrapperId());
     $taskWrapper2 = Factory::getTaskWrapperFactory()->get($task2->getTaskWrapperId());
+    
+    $tw1Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper1);
+    $tw2Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper2);
+    
+    $taskW1Grouped = false;
+    $taskW2Grouped = false;
+    
+    // check if tasks originate from agent's groups
+    foreach ($tw1Groups as $group) {
+      if (in_array($group, $agentGroups)) {
+        $taskW1Grouped = true;
+        break;
+      }
+    }
+    
+    foreach ($tw2Groups as $group) {
+      if (in_array($group, $agentGroups)) {
+        $taskW2Grouped = true;
+        break;
+      }
+    }
+    
+    if ($taskW1Grouped && !$taskW2Grouped) {
+      return $task1; // task1 is from the agent's group and task2 is not
+    }
+    else if ($taskW2Grouped && !$taskW1Grouped) {
+      return $task2; // task2 is from the agent's group and task2 is not
+    }
+    
+    // Both tasks either originate from the agent's group or are not. Filter based on priority
+    // If same priority, choose task2
+    
     if ($taskWrapper1->getPriority() > $taskWrapper2->getPriority()) {
       return $task1; // if first task wrapper has more priority, this task should be done
     }

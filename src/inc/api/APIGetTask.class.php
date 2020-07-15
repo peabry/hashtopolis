@@ -81,7 +81,7 @@ class APIGetTask extends APIBasic {
         }
         else {
           DServerLog::log(DServerLog::TRACE, "Current task is fine, send the more important one", [$this->agent, $currentTask, $task]);
-          $this->sendTask(TaskUtils::getImportantTask($task, $currentTask), $assignment);
+          $this->sendTask(TaskUtils::getImportantTask($task, $currentTask, $this->agent), $assignment);
         }
       }
       else {
