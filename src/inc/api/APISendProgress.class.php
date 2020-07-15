@@ -92,9 +92,11 @@ class APISendProgress extends APIBasic {
           unset($QUERY[PQuerySendProgress::GPU_TEMP][$i]);
         }
       }
-      $data = implode(",", $QUERY[PQuerySendProgress::GPU_TEMP]);
-      $agentStat = new AgentStat(null, $this->agent->getId(), DAgentStatsType::GPU_TEMP, $dataTime, $data);
-      Factory::getAgentStatFactory()->save($agentStat);
+      if (sizeof($QUERY[PQuerySendProgress::GPU_TEMP]) > 0) {
+        $data = implode(",", $QUERY[PQuerySendProgress::GPU_TEMP]);
+        $agentStat = new AgentStat(null, $this->agent->getId(), DAgentStatsType::GPU_TEMP, $dataTime, $data);
+        Factory::getAgentStatFactory()->save($agentStat);
+      }
     }
     if (isset($QUERY[PQuerySendProgress::GPU_UTIL])) {
       for ($i = 0; $i < sizeof($QUERY[PQuerySendProgress::GPU_UTIL]); $i++) {
@@ -102,9 +104,23 @@ class APISendProgress extends APIBasic {
           unset($QUERY[PQuerySendProgress::GPU_UTIL][$i]);
         }
       }
-      $data = implode(",", $QUERY[PQuerySendProgress::GPU_UTIL]);
-      $agentStat = new AgentStat(null, $this->agent->getId(), DAgentStatsType::GPU_UTIL, $dataTime, $data);
-      Factory::getAgentStatFactory()->save($agentStat);
+      if (sizeof($QUERY[PQuerySendProgress::GPU_UTIL]) > 0) {
+        $data = implode(",", $QUERY[PQuerySendProgress::GPU_UTIL]);
+        $agentStat = new AgentStat(null, $this->agent->getId(), DAgentStatsType::GPU_UTIL, $dataTime, $data);
+        Factory::getAgentStatFactory()->save($agentStat);
+      }
+    }
+    if (isset($QUERY[PQuerySendProgress::CPU_UTIL])) {
+      for ($i = 0; $i < sizeof($QUERY[PQuerySendProgress::CPU_UTIL]); $i++) {
+        if (!is_numeric($QUERY[PQuerySendProgress::CPU_UTIL][$i]) || $QUERY[PQuerySendProgress::CPU_UTIL][$i] < 0) {
+          unset($QUERY[PQuerySendProgress::CPU_UTIL][$i]);
+        }
+      }
+      if (sizeof($QUERY[PQuerySendProgress::CPU_UTIL]) > 0) {
+        $data = implode(",", $QUERY[PQuerySendProgress::CPU_UTIL]);
+        $agentStat = new AgentStat(null, $this->agent->getId(), DAgentStatsType::CPU_UTIL, $dataTime, $data);
+        Factory::getAgentStatFactory()->save($agentStat);
+      }
     }
     
     // agent is assigned to this chunk (not necessarily task!)
