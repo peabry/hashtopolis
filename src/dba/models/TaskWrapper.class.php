@@ -11,8 +11,9 @@ class TaskWrapper extends AbstractModel {
   private $taskWrapperName;
   private $isArchived;
   private $cracked;
+  private $createdByUserId;
   
-  function __construct($taskWrapperId, $priority, $taskType, $hashlistId, $accessGroupId, $taskWrapperName, $isArchived, $cracked) {
+  function __construct($taskWrapperId, $priority, $taskType, $hashlistId, $accessGroupId, $taskWrapperName, $isArchived, $cracked, $userId) {
     $this->taskWrapperId = $taskWrapperId;
     $this->priority = $priority;
     $this->taskType = $taskType;
@@ -21,6 +22,7 @@ class TaskWrapper extends AbstractModel {
     $this->taskWrapperName = $taskWrapperName;
     $this->isArchived = $isArchived;
     $this->cracked = $cracked;
+    $this->createdByUserId = $userId;
   }
   
   function getKeyValueDict() {
@@ -33,6 +35,7 @@ class TaskWrapper extends AbstractModel {
     $dict['taskWrapperName'] = $this->taskWrapperName;
     $dict['isArchived'] = $this->isArchived;
     $dict['cracked'] = $this->cracked;
+    $dict['createdByUserId'] = $this->createdByUserId;
     
     return $dict;
   }
@@ -117,12 +120,21 @@ class TaskWrapper extends AbstractModel {
     $this->cracked = $cracked;
   }
   
-  const TASK_WRAPPER_ID = "taskWrapperId";
-  const PRIORITY = "priority";
-  const TASK_TYPE = "taskType";
-  const HASHLIST_ID = "hashlistId";
-  const ACCESS_GROUP_ID = "accessGroupId";
-  const TASK_WRAPPER_NAME = "taskWrapperName";
-  const IS_ARCHIVED = "isArchived";
-  const CRACKED = "cracked";
+  public function getCreatedByUserId() {
+    return $this->createdByUserId;
+  }
+  
+  public function setCreatedByUserId($userId) {
+    $this->createdByUserId = $userId;
+  }
+  
+  const TASK_WRAPPER_ID    = "taskWrapperId";
+  const PRIORITY           = "priority";
+  const TASK_TYPE          = "taskType";
+  const HASHLIST_ID        = "hashlistId";
+  const ACCESS_GROUP_ID    = "accessGroupId";
+  const TASK_WRAPPER_NAME  = "taskWrapperName";
+  const IS_ARCHIVED        = "isArchived";
+  const CRACKED            = "cracked";
+  const CREATED_BY_USER_ID = "createdByUserId";
 }
