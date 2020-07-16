@@ -14,6 +14,24 @@ use DBA\Factory;
 use DBA\File;
 
 class AccessUtils {
+  
+  /**
+   * @param Agent $agent
+   * @return array(int)
+   */
+  public static function getAgentNonDefaultGroups($agent) {
+    $DEFAULT_GROUP_ID = 1;
+    # get non-default groups for agent
+    $qf = new QueryFilter(Agent::AGENT_ID, $agent->getId(), '=');
+    $qf2 = new QueryFilter(AccessGroupAgent::ACCESS_GROUP_ID, $DEFAULT_GROUP_ID, '!=');
+    $groups = Factory::getAccessGroupAgentFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
+    $accessGroups = array();
+    foreach ($groups as $group) {
+      array_push($accessGroups, $group->getAccessGroupId());
+    }
+    return $accessGroups;
+  }
+  
   /**
    * @param Hashlist[]|Hashlist $hashlists
    * @param User $user

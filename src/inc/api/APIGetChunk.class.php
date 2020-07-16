@@ -102,7 +102,7 @@ class APIGetChunk extends APIBasic {
     
     // if the best task is not the one we are working on, we should switch
     DServerLog::log(DServerLog::TRACE, "Determine important task", [$this->agent, $task, $bestTask]);
-    $bestTask = TaskUtils::getImportantTask($bestTask, $task);
+    $bestTask = TaskUtils::getImportantTask($bestTask, $task, $this->agent);
     if ($bestTask->getId() != $task->getId()) {
       Factory::getAgentFactory()->getDB()->commit();
       DServerLog::log(DServerLog::INFO, "Task with higher priority available!", [$this->agent]);
