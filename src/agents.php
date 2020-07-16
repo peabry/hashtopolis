@@ -87,7 +87,13 @@ if (isset($_GET['id'])) {
     UI::add('deviceUtilAvailable', (sizeof($data['sets']) > 0) ? true : false);
     UI::add('deviceUtilXLabels', json_encode($data['xlabels']));
     UI::add('deviceUtilAxes', json_encode($data['axes']));
-    
+
+    $data = AgentUtils::getGraphData($agent, [DAgentStatsType::CPU_UTIL]);
+    UI::add('cpuUtil', json_encode($data['sets']));
+    UI::add('cpuUtilAvailable', (sizeof($data['sets']) > 0) ? true : false);
+    UI::add('cpuUtilXLabels', json_encode($data['xlabels']));
+    UI::add('cpuUtilAxes', json_encode($data['axes']));
+
     $qF = new QueryFilter(Assignment::AGENT_ID, $agent->getId(), "=");
     $assignment = Factory::getAssignmentFactory()->filter([Factory::FILTER => $qF], true);
     $currentTask = 0;
