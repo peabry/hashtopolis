@@ -26,6 +26,7 @@ use DBA\AgentStat;
 use DBA\FileDelete;
 use DBA\Factory;
 use DBA\Speed;
+use DBA\User;
 
 /**
  *
@@ -531,6 +532,18 @@ class Util {
         $set->addValue('numChunks', $chunkInfo[0]);
         $set->addValue('performance', $taskInfo[4]);
         $set->addValue('speed', $taskInfo[5]);
+        
+        // get owner information
+        $qf = new QueryFilter(User::USER_ID, $task->getCreatedByUserId(), '=');
+        $users = Factory::getUserFactory()->filter([Factory::FILTER => [$qf]]);
+        $user = $users[0];
+        $username = $user->getUsername();
+        $set->addValue('username', $username);
+        
+        $group = AccessUtils::getUserNonDefaultGroup($user);
+        $groupName = $group->getGroupName();
+        $set->addValue('group', $groupName);
+        
         $taskList[] = $set;
       }
     }

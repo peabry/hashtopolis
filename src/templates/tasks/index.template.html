@@ -32,6 +32,8 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
+          <th>Created By</th>
+          <th>Group</th>
           <th>Hashlist</th>
           <th>Dispatched/Searched</th>
           <th>Cracked</th>
@@ -55,10 +57,10 @@
       $(document).ready(function () {
         $('#tasks').DataTable({
           pageLength: 50,
-          "order": [ [7, 'desc'], [0, 'asc'] ],
+          "order": [ [9, 'desc'], [0, 'asc'] ],
           "columnDefs": [
-            { "orderable": false, "targets": [3, 8] },
-            { "orderable": true, "targets": [0, 1, 2, 4, 5, 6, 7] }
+            { "orderable": false, "targets": [5, 10] },
+            { "orderable": true, "targets": [0, 1, 2, 3, 4, 6, 7, 8, 9] }
           ]
         });
       });

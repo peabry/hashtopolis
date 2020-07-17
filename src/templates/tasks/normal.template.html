@@ -19,6 +19,12 @@
     {{ENDIF}}
   </td>
   <td>
+    [[set.getVal('username')]]
+  </td>
+  <td>
+    [[set.getVal('group')]]
+  </td>
+  <td>
     {{IF [[accessControl.hasPermission([[$DAccessControl::VIEW_HASHLIST_ACCESS]])]]}}
       <a href="hashlists.php?id=[[set.getVal('hashlistId')]]">[[set.getVal('hashlistName')]]</a>
     {{ELSE}}
