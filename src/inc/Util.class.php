@@ -539,6 +539,11 @@ class Util {
         $user = $users[0];
         $username = $user->getUsername();
         $set->addValue('username', $username);
+        
+        $group = AccessUtils::getUserNonDefaultGroup($user);
+        $groupName = $group->getGroupName();
+        $set->addValue('group', $groupName);
+        
         $taskList[] = $set;
       }
     }
