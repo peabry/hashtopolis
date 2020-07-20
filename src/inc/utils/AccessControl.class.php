@@ -6,6 +6,7 @@ use DBA\Factory;
 class AccessControl {
   private $user;
   private $rightGroup;
+  private $isAdmin;
   
   private static $instance = null;
   
@@ -38,8 +39,10 @@ class AccessControl {
    */
   private function __construct($user = null, $groupId = 0) {
     $this->user = $user;
+    $this->isAdmin = False;
     if ($this->user != null) {
       $this->rightGroup = Factory::getRightGroupFactory()->get($this->user->getRightGroupId());
+      $this->isAdmin = $this->rightGroup->getId() == 1;
     }
     else if ($groupId != 0) {
       $this->rightGroup = Factory::getRightGroupFactory()->get($groupId);
@@ -109,5 +112,9 @@ class AccessControl {
       }
     }
     return false;
+  }
+  
+  public function isAdmin() {
+    return $this->isAdmin;
   }
 }
