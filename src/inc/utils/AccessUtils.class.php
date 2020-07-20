@@ -198,7 +198,7 @@ class AccessUtils {
    */
   public static function getUserNonDefaultGroup($user) {
     $qf = new QueryFilter(AccessGroupUser::USER_ID, $user->getId(), '=');
-    $qf1 = new QUeryFilter(AccessGroupUser::ACCESS_GROUP_ID, 1, '!=');
+    $qf1 = new QueryFilter(AccessGroupUser::ACCESS_GROUP_ID, 1, '!=');
     $groups = Factory::getAccessGroupUserFactory()->filter([Factory::FILTER => [$qf, $qf1]]);
     $group = end($groups);
     $qf = new QueryFilter(AccessGroup::ACCESS_GROUP_ID, $group->getAccessGroupId(), '=');

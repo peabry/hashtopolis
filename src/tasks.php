@@ -57,6 +57,14 @@ if (isset($_GET['id']) || !isset($_GET['new'])) {
   UI::add('autorefreshUrl', "");
 }
 
+// get non-default group of user
+$nonDefaultGroup = '';
+if (!AccessControl::getInstance()->isAdmin()) {
+  $nonDefaultGroup =  AccessUtils::getUserNonDefaultGroup(Login::getInstance()->getUser())->getGroupName();
+    }
+UI::add('nonDefaultGroup', $nonDefaultGroup);
+
+
 if (isset($_GET['id'])) {
   AccessControl::getInstance()->checkPermission(DViewControl::TASKS_VIEW_PERM);
   Template::loadInstance("tasks/detail");
@@ -322,9 +330,10 @@ else if (isset($_GET['new'])) {
     $copy->setAttackCmd(SConfig::getInstance()->getVal(DConfig::HASHLIST_ALIAS) . " " . $copy->getAttackCmd());
   }
   
-  UI::add('accessGroups', AccessUtils::getAccessGroupsOfUser(Login::getInstance()->getUser()));
+  $accessGroups = AccessUtils::getAccessGroupsOfUser(Login::getInstance()->getUser());
+  UI::add('accessGroups', $accessGroups);
   $accessGroupIds = Util::arrayOfIds(UI::get('accessGroups'));
-  
+
   UI::add('orig', $orig);
   UI::add('copy', $copy);
   UI::add('origType', $origType);
