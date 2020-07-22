@@ -75,6 +75,7 @@
   </td>
   <td style='min-width: 130px' data-sort="[[set.getVal('priority')]]">
     {{IF [[accessControl.hasPermission([[$DAccessControl::MANAGE_TASK_ACCESS]])]]}}
+    {{IF [[nonDefaultGroup]] == [[set.getVal('group')]] || [[accessControl.isAdmin()]] }}
       <form class="form-inline" action="tasks.php" method="POST">
         <input type='hidden' name='action' value='[[$DTaskAction::SET_PRIORITY]]'>
         <input type="hidden" name="task" value="[[set.getVal('taskId')]]">
@@ -85,10 +86,13 @@
     {{ELSE}}
       [[set.getVal('priority')]]
     {{ENDIF}}
+    {{ELSE}}
+      [[set.getVal('priority')]]
+    {{ENDIF}}
   </td>
   <td style='min-width: 120px'>
     {{IF [[accessControl.hasPermission([[$DAccessControl::CREATE_TASK_ACCESS]])]]}}
-    {{IF [[nonDefaultGroup]] == [[set.getVal('group')]] || [[AccessUtils::isAdmin([[accessControl.getUser()]])]] }}
+    {{IF [[nonDefaultGroup]] == [[set.getVal('group')]] || [[accessControl.isAdmin()]] }}
       <form class="float-right mx-1" action="tasks.php" method="POST" onSubmit="if (!confirm('Really delete task [[set.getVal('taskId')]]?')) return false;">
         <input type="hidden" name="action" value="[[$DTaskAction::DELETE_TASK]]">
         <input type="hidden" name="task" value="[[set.getVal('taskId')]]">
