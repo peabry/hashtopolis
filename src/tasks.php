@@ -75,7 +75,10 @@ if (isset($_GET['id'])) {
   UI::add('task', $task);
   $taskWrapper = Factory::getTaskWrapperFactory()->get($task->getTaskWrapperId());
   UI::add('taskWrapper', $taskWrapper);
-  
+
+
+  $task_group = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper)[0];
+
   $fileInfo = Util::getFileInfo($task, AccessUtils::getAccessGroupsOfUser(Login::getInstance()->getUser()));
   if ($fileInfo[4]) {
     UI::printError("ERROR", "No access to this task!");

@@ -36,11 +36,7 @@ class TaskUtils {
     $qf = new QueryFilter(AccessGroupUser::USER_ID, $taskWrapper->getCreatedByUserId(), '=');
     $qf2 = new QueryFilter(AccessGroupUser::ACCESS_GROUP_ID, $DEFAULT_GROUP, '!=');
     $groups = Factory::getAccessGroupUserFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
-    $accessGroups = array();
-    foreach ($groups as $group) {
-      array_push($accessGroups, $group->getAccessGroupId());
-    }
-    return $accessGroups;
+    return $groups;
   }
   
   /**
@@ -52,6 +48,10 @@ class TaskUtils {
   public static function getGroupTaskWrappers($agent, $all = false) {
     $DEFAULT_GROUP_ID = 1;
     $accessGroups = AccessUtils::getAgentNonDefaultGroups($agent);
+    $accessGroupIds = array();
+    foreach($accessGroups as $group) {
+      $accessGroupIds[] = $group->getAccessGroupId();
+    }
     # taskwrappers which are not default
     $qf = new QueryFilter('AccessGroupUser.accessGroupId', $DEFAULT_GROUP_ID, '!=');
     $qf2 = new QueryFilter(TaskWrapper::PRIORITY, 0, (SConfig::getInstance()->getVal(DConfig::PRIORITY_0_START)) ? ">=" : ">");
@@ -60,7 +60,7 @@ class TaskUtils {
       $qf2 = new QueryFilter(TaskWrapper::PRIORITY, 0, ">=");
     }
     $jf = new JoinFilter(Factory::getAccessGroupUserFactory(), TaskWrapper::CREATED_BY_USER_ID, AccessGroupUser::USER_ID);
-    $cf = new ContainFilter('AccessGroupUser.accessGroupId', $accessGroups);
+    $cf = new ContainFilter('AccessGroupUser.accessGroupId', $accessGroupIds);
     $of = new OrderFilter(TaskWrapper::PRIORITY, 'DESC');
     $taskwrappers = Factory::getTaskWrapperFactory()->filter([Factory::FILTER => [$qf, $qf2, $qf3, $cf], Factory::JOIN => $jf, Factory::ORDER => $of]);
     return $taskwrappers['TaskWrapper'];
@@ -1128,26 +1128,37 @@ class TaskUtils {
     }
     
     $agentGroups = AccessUtils::getAgentNonDefaultGroups($agent);
+    $agentGroupIds = array();
+    foreach ($agentGroups as $group) {
+     $agentGroupIds[] = $group->getAccessGroupId();
+    }
     
     $taskWrapper1 = Factory::getTaskWrapperFactory()->get($task1->getTaskWrapperId());
     $taskWrapper2 = Factory::getTaskWrapperFactory()->get($task2->getTaskWrapperId());
     
     $tw1Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper1);
+    $tw1GroupIds = array();
+    foreach ($tw1Groups as $group) {
+      $tw1GroupIds[] = $group->getAccessGroupId();
+    }
     $tw2Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper2);
-    
+    $tw2GroupIds = array();
+    foreach ($tw2Groups as $group) {
+      $tw2GroupIds[] = $group->getAccessGroupId();
+    }
     $taskW1Grouped = false;
     $taskW2Grouped = false;
     
     // check if tasks originate from agent's groups
-    foreach ($tw1Groups as $group) {
-      if (in_array($group, $agentGroups)) {
+    foreach ($tw1GroupIds as $group) {
+      if (in_array($group, $agentGroupIds)) {
         $taskW1Grouped = true;
         break;
       }
     }
     
-    foreach ($tw2Groups as $group) {
-      if (in_array($group, $agentGroups)) {
+    foreach ($tw2GroupIds as $group) {
+      if (in_array($group, $agentGroupIds)) {
         $taskW2Grouped = true;
         break;
       }

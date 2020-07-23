@@ -17,7 +17,7 @@ class AccessUtils {
   
   /**
    * @param Agent $agent
-   * @return array(int)
+   * @return array(AccessGroup)
    */
   public static function getAgentNonDefaultGroups($agent) {
     $DEFAULT_GROUP_ID = 1;
@@ -25,11 +25,7 @@ class AccessUtils {
     $qf = new QueryFilter(Agent::AGENT_ID, $agent->getId(), '=');
     $qf2 = new QueryFilter(AccessGroupAgent::ACCESS_GROUP_ID, $DEFAULT_GROUP_ID, '!=');
     $groups = Factory::getAccessGroupAgentFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
-    $accessGroups = array();
-    foreach ($groups as $group) {
-      array_push($accessGroups, $group->getAccessGroupId());
-    }
-    return $accessGroups;
+    return $groups;
   }
   
   /**
