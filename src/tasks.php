@@ -11,6 +11,7 @@ use DBA\OrderFilter;
 use DBA\Preprocessor;
 use DBA\QueryFilter;
 use DBA\Factory;
+use DBA\User;
 
 require_once(dirname(__FILE__) . "/inc/load.php");
 
@@ -57,12 +58,17 @@ if (isset($_GET['id']) || !isset($_GET['new'])) {
   UI::add('autorefreshUrl', "");
 }
 
+
 // get non-default group of user
+$isAdmin = AccessControl::getInstance()->isAdmin();
+UI::add('isAdmin', $isAdmin);
 $nonDefaultGroup = '';
 if (!AccessControl::getInstance()->isAdmin()) {
-  $nonDefaultGroup =  AccessUtils::getUserNonDefaultGroup(Login::getInstance()->getUser())->getGroupName();
+  $nonDefaultAccessGroup =  AccessUtils::getUserNonDefaultGroup(Login::getInstance()->getUser());
+  $nonDefaultGroup = $nonDefaultAccessGroup->getGroupName();
     }
 UI::add('nonDefaultGroup', $nonDefaultGroup);
+UI::add('user', Login::getInstance()->getUser());
 
 
 if (isset($_GET['id'])) {
@@ -78,6 +84,21 @@ if (isset($_GET['id'])) {
 
 
   $task_group = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper)[0];
+  UI::add('taskGroup', $task_group);
+  $owner = False;
+  if ($isAdmin) {
+    $owner = True;
+  }
+  else if ($task_group->getId() == $nonDefaultAccessGroup->getId()) {
+    $owner = True;
+  }
+
+  UI::add('owner', $owner);
+  
+  $qf = new QueryFilter(User::USER_ID, $taskWrapper->getCreatedByUserId(), '=');
+  $createdByUser = Factory::getUserFactory()->filter([Factory::FILTER => $qf])[0];
+  UI::add('taskUser', $createdByUser);
+  
 
   $fileInfo = Util::getFileInfo($task, AccessUtils::getAccessGroupsOfUser(Login::getInstance()->getUser()));
   if ($fileInfo[4]) {
