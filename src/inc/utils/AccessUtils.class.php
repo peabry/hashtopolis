@@ -5,6 +5,7 @@ use DBA\AccessGroupAgent;
 use DBA\AccessGroupUser;
 use DBA\Agent;
 use DBA\JoinFilter;
+use DBA\ContainFilter;
 use DBA\QueryFilter;
 use DBA\Task;
 use DBA\User;
@@ -25,7 +26,16 @@ class AccessUtils {
     $qf = new QueryFilter(Agent::AGENT_ID, $agent->getId(), '=');
     $qf2 = new QueryFilter(AccessGroupAgent::ACCESS_GROUP_ID, $DEFAULT_GROUP_ID, '!=');
     $groups = Factory::getAccessGroupAgentFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
-    return $groups;
+    
+    $accessGroupIds = array();
+    foreach ($groups as $group) {
+      $accessGroupIds[] = $group->getAccessGroupId();
+    }
+    
+    $cf = new ContainFilter(AccessGroup::ACCESS_GROUP_ID, $accessGroupIds);
+    $accessGroups = Factory::getAccessGroupFactory()->filter([Factory::FILTER => [$cf]]);
+    return $accessGroups;
+    
   }
   
   /**
