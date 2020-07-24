@@ -36,7 +36,14 @@ class TaskUtils {
     $qf = new QueryFilter(AccessGroupUser::USER_ID, $taskWrapper->getCreatedByUserId(), '=');
     $qf2 = new QueryFilter(AccessGroupUser::ACCESS_GROUP_ID, $DEFAULT_GROUP, '!=');
     $groups = Factory::getAccessGroupUserFactory()->filter([Factory::FILTER => [$qf, $qf2]]);
-    return $groups;
+    
+    $acIds = array();
+    foreach ($groups as $group) {
+      $acIds[] = $group->getAccessGroupId();
+    }
+    $cf = new ContainFilter(AccessGroup::ACCESS_GROUP_ID, $acIds);
+    $accessGroups = Factory::getAccessGroupFactory()->filter([Factory::FILTER => [$cf]]);
+    return $accessGroups;
   }
   
   /**
@@ -50,7 +57,7 @@ class TaskUtils {
     $accessGroups = AccessUtils::getAgentNonDefaultGroups($agent);
     $accessGroupIds = array();
     foreach($accessGroups as $group) {
-      $accessGroupIds[] = $group->getAccessGroupId();
+      $accessGroupIds[] = $group->getId();
     }
     # taskwrappers which are not default
     $qf = new QueryFilter('AccessGroupUser.accessGroupId', $DEFAULT_GROUP_ID, '!=');
@@ -1130,24 +1137,17 @@ class TaskUtils {
     $agentGroups = AccessUtils::getAgentNonDefaultGroups($agent);
     $agentGroupIds = array();
     foreach ($agentGroups as $group) {
-     $agentGroupIds[] = $group->getAccessGroupId();
+     $agentGroupIds[] = $group->getId();
     }
     
     $taskWrapper1 = Factory::getTaskWrapperFactory()->get($task1->getTaskWrapperId());
     $taskWrapper2 = Factory::getTaskWrapperFactory()->get($task2->getTaskWrapperId());
     
     $tw1Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper1);
-    $tw1GroupIds = array();
-    foreach ($tw1Groups as $group) {
-      $tw1GroupIds[] = $group->getAccessGroupId();
-    }
+    $tw1GroupIds = Util::arrayOfIds($tw1Groups);
+
     $tw2Groups = TaskUtils::getTaskWrapperNonDefaultGroups($taskWrapper2);
-    $tw2GroupIds = array();
-    foreach ($tw2Groups as $group) {
-      $tw2GroupIds[] = $group->getAccessGroupId();
-    }
-    $taskW1Grouped = false;
-    $taskW2Grouped = false;
+    $tw2GroupIds = Util::arrayOfIds($tw2Groups);
     
     // check if tasks originate from agent's groups
     foreach ($tw1GroupIds as $group) {
