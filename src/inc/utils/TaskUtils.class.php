@@ -844,7 +844,7 @@ class TaskUtils {
         0,
         0,
         '',
-        0
+        $task->getCreatedByUserId()
       );
       $newTask = Factory::getTaskFactory()->save($newTask);
       $taskFiles = [];
@@ -1150,6 +1150,7 @@ class TaskUtils {
     $tw2GroupIds = Util::arrayOfIds($tw2Groups);
     
     // check if tasks originate from agent's groups
+    $taskW1Grouped = false;
     foreach ($tw1GroupIds as $group) {
       if (in_array($group, $agentGroupIds)) {
         $taskW1Grouped = true;
@@ -1157,6 +1158,7 @@ class TaskUtils {
       }
     }
     
+    $taskW2Grouped = false;
     foreach ($tw2GroupIds as $group) {
       if (in_array($group, $agentGroupIds)) {
         $taskW2Grouped = true;
